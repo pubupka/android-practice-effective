@@ -34,6 +34,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
@@ -60,14 +61,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.load
+import java.util.Dictionary
 
 
 class MainActivity : ComponentActivity() {
@@ -83,13 +87,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable("mainScreen")
                     {
-                        MainScreen {
-                            navController.navigate("heroDescriptionScreen")
-                        }
+                        MainScreen (navController = navController)
                     }
-                    composable("heroDescriptionScreen")
-                    {
-                        HeroDescriptionScreen()
+
+                    composable(
+                        "heroDescriptionScreen/{heroId}",
+                        arguments = listOf(navArgument("heroId") { type = NavType.IntType})
+                    ) {
+                        stackEntry ->
+                        val heroId = stackEntry.arguments?.getInt("heroId")
+                        HeroDescriptionScreen(heroId = heroId, navController = navController)
                     }
                 }
             }
@@ -98,19 +105,52 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HeroDescriptionScreen()
+fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
 {
+    val namesAndUrls = listOf(
+        Pair("Iron Man", "https://img2.akspic.ru/crops/9/2/9/5/6/165929/165929-figurka-zheleznyj_chelovek-dzhejms_rods-supergeroj-ostov-1125x2436.jpg"),
+        Pair("Thor","https://images.wallpapersden.com/image/download/thor-the-dark-world-8k_bGZtaWmUmZqaraWkpJRmZmdqrWdpaGs.jpg"),
+        Pair("Venom","https://e0.pxfuel.com/wallpapers/848/316/desktop-wallpaper-best-venom-movie-iphone-ultimate-venom.jpg"),
+    )
+
     Box (
         Modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Text("ABOBA", fontSize = 40.sp, style = MaterialTheme.typography.titleLarge)
+            contentAlignment = Alignment.BottomStart
+    ) {
+        AsyncImage(
+            model = namesAndUrls[heroId!!].second,
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+        )
+
+        Text(
+            modifier = Modifier.padding(15.dp),
+            text = namesAndUrls[heroId].first,
+            color = Color.White,
+            fontSize = 35.sp,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        Box (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            contentAlignment = Alignment.TopStart,
+        ) {
+            Image(
+                modifier = Modifier
+                    .clickable { navController.navigate("mainScreen") }
+                    .size(45.dp),
+                painter = painterResource(id = R.drawable.backward_arrow),
+                contentDescription = null
+            )
+        }
     }
 }
 
 @Composable
-fun MainScreen(onCardClick: () -> Unit) {
+fun MainScreen(navController: NavController) {
     Box (
         Modifier
             .fillMaxSize()
@@ -136,14 +176,14 @@ fun MainScreen(onCardClick: () -> Unit) {
                 fontSize = 43.sp,
                 style = MaterialTheme.typography.titleMedium
             )
-            ShowHeroes(onCardClick)
+            ShowHeroes(navController)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowHeroes(onCardClick: () -> Unit) {
+fun ShowHeroes(navController: NavController) {
     val lazyListState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
 
@@ -153,20 +193,26 @@ fun ShowHeroes(onCardClick: () -> Unit) {
         Pair("Venom","https://e0.pxfuel.com/wallpapers/848/316/desktop-wallpaper-best-venom-movie-iphone-ultimate-venom.jpg"),
     )
 
+    var heroesCount = namesAndUrls.size
+
     LazyRow (
         Modifier.padding(vertical = 20.dp, horizontal = 10.dp),
         state = lazyListState,
         flingBehavior = snapBehavior,
         contentPadding = PaddingValues(horizontal = 30.dp)
     ) {
-        items(namesAndUrls) {
-            tuple -> ShowHeroCard(heroName = tuple.first, url = tuple.second, onCardClick)
+        items(heroesCount) {
+            heroId -> ShowHeroCard(
+                heroId = heroId,
+                namesAndUrls = namesAndUrls,
+                navController
+            )
         }
     }
 }
 
 @Composable
-fun ShowHeroCard(heroName: String, url: String, onClick: () -> Unit) {
+fun ShowHeroCard(heroId: Int, namesAndUrls: List<Pair<String, String>>, navController: NavController) {
     Card(
         shape = RoundedCornerShape(
             corner = CornerSize(15.dp)
@@ -179,7 +225,7 @@ fun ShowHeroCard(heroName: String, url: String, onClick: () -> Unit) {
             .size(width = 310.dp, height = 630.dp)
             .padding(horizontal = 8.dp)
             .clickable {
-                onClick()
+                navController.navigate("heroDescriptionScreen/$heroId")
             }
     ) {
         Box(
@@ -188,14 +234,14 @@ fun ShowHeroCard(heroName: String, url: String, onClick: () -> Unit) {
             contentAlignment = Alignment.BottomStart,
         ) {
             AsyncImage(
-                model = url,
+                model = namesAndUrls[heroId].second,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
 
             Text(
                 modifier = Modifier.padding(15.dp),
-                text = heroName,
+                text = namesAndUrls[heroId].first,
                 color = Color.White,
                 fontSize = 35.sp,
                 style = MaterialTheme.typography.titleMedium,
