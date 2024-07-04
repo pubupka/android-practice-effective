@@ -27,14 +27,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable("mainScreen")
                     {
-                        MainScreen (navController = navController)
+                        MainScreen(navController = navController)
                     }
 
                     composable(
                         "heroDescriptionScreen/{heroId}",
-                        arguments = listOf(navArgument("heroId") { type = NavType.IntType})
-                    ) {
-                        stackEntry ->
+                        arguments = listOf(navArgument("heroId") { type = NavType.IntType })
+                    ) { stackEntry ->
                         val heroId = stackEntry.arguments?.getInt("heroId")
                         HeroDescriptionScreen(heroId = heroId, navController = navController)
                     }

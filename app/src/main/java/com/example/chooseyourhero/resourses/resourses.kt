@@ -1,14 +1,15 @@
 package com.example.chooseyourhero.resourses
+
 import com.example.chooseyourhero.R
 
-data class Hero (
+data class Hero(
     val id: Int,
     val imageUrl: Int,
     val name: Int,
     val description: Int
 )
 
-object heroes {
+object Heroes {
     val sample = listOf(
         Hero(
             0,

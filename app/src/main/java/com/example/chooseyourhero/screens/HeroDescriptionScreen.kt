@@ -21,12 +21,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.chooseyourhero.R
-import com.example.chooseyourhero.resourses.heroes
+import com.example.chooseyourhero.resourses.Heroes
 
 @Composable
-fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
-{
-    Box (
+fun HeroDescriptionScreen(heroId: Int?, navController: NavController) {
+    Box(
         Modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -34,7 +33,7 @@ fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize(),
-            model = stringResource(id = heroes.sample[heroId!!].imageUrl),
+            model = stringResource(id = Heroes.sample[heroId!!].imageUrl),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )
@@ -44,12 +43,12 @@ fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomStart
         ) {
-            Column (
+            Column(
                 Modifier
                     .padding(15.dp)
             ) {
                 Text(
-                    text = stringResource(id = heroes.sample[heroId].name),
+                    text = stringResource(id = Heroes.sample[heroId].name),
                     color = Color.White,
                     fontSize = 35.sp,
                     style = MaterialTheme.typography.titleMedium,
@@ -57,7 +56,7 @@ fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
 
                 Text(
                     modifier = Modifier.padding(vertical = 5.dp),
-                    text = stringResource(id = heroes.sample[heroId].description),
+                    text = stringResource(id = Heroes.sample[heroId].description),
                     color = Color.White,
                     fontSize = 35.sp,
                     style = MaterialTheme.typography.bodyMedium,
@@ -66,7 +65,7 @@ fun HeroDescriptionScreen(heroId: Int?, navController: NavController)
             }
         }
 
-        Box (
+        Box(
             modifier = Modifier
                 .fillMaxSize(),
             contentAlignment = Alignment.TopStart,

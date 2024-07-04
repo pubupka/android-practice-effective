@@ -32,12 +32,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.chooseyourhero.R
-import com.example.chooseyourhero.resourses.Hero
-import com.example.chooseyourhero.resourses.heroes
+import com.example.chooseyourhero.resourses.Heroes
 
 @Composable
 fun MainScreen(navController: NavController) {
-    Box (
+    Box(
         Modifier
             .fillMaxSize()
             .paint(
@@ -46,7 +45,7 @@ fun MainScreen(navController: NavController) {
             ),
         contentAlignment = Alignment.BottomCenter
     ) {
-        Column (
+        Column(
             modifier = Modifier.padding(vertical = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
@@ -73,16 +72,16 @@ fun ShowHeroes(navController: NavController) {
     val lazyListState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
 
-    var heroesCount = heroes.sample.size
+    val heroesCount = Heroes.sample.size
 
-    LazyRow (
+    LazyRow(
         Modifier.padding(vertical = 20.dp, horizontal = 10.dp),
         state = lazyListState,
         flingBehavior = snapBehavior,
         contentPadding = PaddingValues(horizontal = 30.dp)
     ) {
-        items(heroesCount) {
-            heroId -> ShowHeroCard(
+        items(heroesCount) { heroId ->
+            ShowHeroCard(
                 heroId = heroId,
                 navController
             )
@@ -113,14 +112,14 @@ fun ShowHeroCard(heroId: Int, navController: NavController) {
             contentAlignment = Alignment.BottomStart,
         ) {
             AsyncImage(
-                model = stringResource(id = heroes.sample[heroId].imageUrl),
+                model = stringResource(id = Heroes.sample[heroId].imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
 
             Text(
                 modifier = Modifier.padding(15.dp),
-                text = stringResource(id = heroes.sample[heroId].name),
+                text = stringResource(id = Heroes.sample[heroId].name),
                 color = Color.White,
                 fontSize = 35.sp,
                 style = MaterialTheme.typography.titleMedium,
