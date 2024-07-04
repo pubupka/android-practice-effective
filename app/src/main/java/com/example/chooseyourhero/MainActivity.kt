@@ -8,6 +8,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
@@ -54,9 +55,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -69,14 +75,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             ChooseYourHeroTheme {
-                Scaffold(modifier = Modifier
-                    .fillMaxSize())
-                { innerPadding ->
-                    MainScreen(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    )
+                NavHost(
+                    navController = navController,
+                    startDestination = "mainScreen",
+                ) {
+                    composable("mainScreen")
+                    {
+                        MainScreen {
+                            navController.navigate("heroDescriptionScreen")
+                        }
+                    }
+                    composable("heroDescriptionScreen")
+                    {
+                        HeroDescriptionScreen()
+                    }
                 }
             }
         }
@@ -84,7 +98,19 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun HeroDescriptionScreen()
+{
+    Box (
+        Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Text("ABOBA", fontSize = 40.sp, style = MaterialTheme.typography.titleLarge)
+    }
+}
+
+@Composable
+fun MainScreen(onCardClick: () -> Unit) {
     Box (
         Modifier
             .fillMaxSize()
@@ -110,14 +136,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 fontSize = 43.sp,
                 style = MaterialTheme.typography.titleMedium
             )
-            ShowHeroes()
+            ShowHeroes(onCardClick)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowHeroes() {
+fun ShowHeroes(onCardClick: () -> Unit) {
     val lazyListState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
 
@@ -134,13 +160,13 @@ fun ShowHeroes() {
         contentPadding = PaddingValues(horizontal = 30.dp)
     ) {
         items(namesAndUrls) {
-            tuple -> ShowHeroCard(heroName = tuple.first, url = tuple.second)
+            tuple -> ShowHeroCard(heroName = tuple.first, url = tuple.second, onCardClick)
         }
     }
 }
 
 @Composable
-fun ShowHeroCard(heroName: String, url: String) {
+fun ShowHeroCard(heroName: String, url: String, onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(
             corner = CornerSize(15.dp)
@@ -152,6 +178,9 @@ fun ShowHeroCard(heroName: String, url: String) {
         modifier = Modifier
             .size(width = 310.dp, height = 630.dp)
             .padding(horizontal = 8.dp)
+            .clickable {
+                onClick()
+            }
     ) {
         Box(
             modifier = Modifier
@@ -175,14 +204,14 @@ fun ShowHeroCard(heroName: String, url: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    ChooseYourHeroTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            MainScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    ChooseYourHeroTheme {
+//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//            MainScreen(
+//
+//            )
+//        }
+//    }
+//}
