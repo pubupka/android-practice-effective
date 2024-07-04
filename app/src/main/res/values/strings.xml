@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Choose your Hero</string>
+    <string name="iron_man_name">Iron Man</string>
+    <string name="iron_man_image_url">"https://img2.akspic.ru/crops/9/2/9/5/6/165929/165929-figurka-zheleznyj_chelovek-dzhejms_rods-supergeroj-ostov-1125x2436.jpg"</string>
+    <string name="iron_man_description">Genius, billionaire, playboy, philanthropist!</string>
+    <string name="thor_name">Thor</string>
+    <string name="thor_image_url">https://images.wallpapersden.com/image/download/thor-the-dark-world-8k_bGZtaWmUmZqaraWkpJRmZmdqrWdpaGs.jpg</string>
+    <string name="thor_description">You copied my beard!</string>
+    <string name="venom_name">Venom</string>
+    <string name="venom_image_url">https://e0.pxfuel.com/wallpapers/848/316/desktop-wallpaper-best-venom-movie-iphone-ultimate-venom.jpg</string>
+    <string name="venom_description">We are Venom!</string>
 </resources>
